@@ -6,7 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.fragment.findNavController
 import com.example.notetaking.databinding.FragmentLoginBinding
 
 class LoginFragment : Fragment() {
@@ -24,13 +26,28 @@ class LoginFragment : Fragment() {
         )
 
         // Inisialisasi ViewModel
-        viewModel = ViewModelProvider(this).get(LoginViewModel::class.java)
+        viewModel = ViewModelProvider(requireActivity()).get(LoginViewModel::class.java)
+
+        viewModel.navigateToRegister.observe(viewLifecycleOwner, Observer { shouldNavigate ->
+            if (shouldNavigate) {
+                findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+            }
+        })
 
         // Menghubungkan ViewModel dengan layout
         binding.viewModel = viewModel
 
         // Mengatur lifecycle owner untuk Data Binding
         binding.lifecycleOwner = viewLifecycleOwner
+
+        // Menangani logika login di sini saat tombol "Login" diklik
+        binding.loginButton.setOnClickListener {
+            val username = binding.usernameEditText.text.toString()
+            val password = binding.passwordEditText.text.toString()
+
+            // Lakukan verifikasi login di sini
+            findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
+        }
 
         return binding.root
     }

@@ -8,6 +8,10 @@
         <variable
             name="viewModel"
             type="com.example.notetaking.LoginViewModel" />
+
+        <variable
+            name="view"
+            type="android.view.View" />
     </data>
 
     <RelativeLayout
