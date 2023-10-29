@@ -1,45 +1,79 @@
 package com.example.notetaking.home
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.contentValuesOf
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
+import com.example.notetaking.R
 import com.example.notetaking.databinding.FragmentHome1Binding
+import com.example.notetaking.local.LocalRepository
 
 class Home1Fragment : DialogFragment() {
     private var binding: FragmentHome1Binding? = null
-    private lateinit var viewModel: HomeViewModel
+    private var viewModel: HomeViewModel? = null
     private var recyclerView: RecyclerView? = null
-
-    private val adapter = NoteAdapter()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        binding = FragmentHome1Binding.inflate(inflater, container, false)
-        viewModel = ViewModelProvider(this).get(HomeViewModel::class.java)
+        viewModel = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HomeViewModel(
+                    local = LocalRepository(
+                        sharedPreferences = getSharedPreferences(
+                            LocalRepository.PREF_NAME,
+                            AppCompatActivity.MODE_PRIVATE,
+                        ),
+                        noteDatabase = Room.databaseBuilder(
+                            context = applicationContext,
+                            name = NoteDatabase.DATABASE_NAME,
+                            klass = NoteDatabase::class.java,
+                        ).build(),
+                    )
+                ) as T
+            }
+        }.create(HomeViewModel::class.java)
 
-        // Set ViewModel to the binding
-        binding.viewModel = viewModel
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+        binding?.lifecycleOwner = this
+        binding?.viewModel = viewModel
+        binding?.view = binding?.root
+        binding?.adapter = NoteAdapter(
+            homeViewModel = viewModel,
+            updateNote = { note ->
+                Home2Fragment.show(
+                    viewModel = viewModel,
+                    fragmentManager = supportFragmentManager,
+                    title = note.title,
+                    content = note.content,
+                )
+            },
+        )
+        binding?.layoutManager = LinearLayoutManager(this)
 
-        // Set RecyclerView adapter and layout manager
-        val adapter = NoteAdapter() // Gantilah dengan adapter sesuai kebutuhan Anda
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        // Observe LiveData for empty data
-        viewModel.notes.observe(viewLifecycleOwner) { notes ->
-            if (notes.isEmpty()) {
-                binding.emptyTextView.visibility = View.VISIBLE
-            } else {
-                binding.emptyTextView.visibility = View.GONE
+        mainViewModel?.logout?.observe(this) { isLoggedOut ->
+            if (isLoggedOut) {
+                startActivity(Intent(this, LoginActivity::class.java))
+                this.finish()
             }
         }
+
+        binding?.buttonCreateNote?.setOnClickListener {
+            CreateNoteDialog.show(mainViewModel, supportFragmentManager)
+        }
+
+        mainViewModel?.provideData()
 
         return binding.root
     }

@@ -2,24 +2,30 @@ package com.example.notetaking.home
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.notetaking.R
 import com.example.notetaking.databinding.ItemNoteBinding
 
-class NoteAdapter : RecyclerView.Adapter<NoteViewHolder>() {
-
+class NoteAdapter(
+    private val homeViewModel: HomeViewModel?,
+    private val updateNote: (note: Note) -> Unit,
+) : ListAdapter<Note, NoteViewHolder>(
+    NoteDiffUtil()
+) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NoteViewHolder {
-        val layoutInflater = LayoutInflater.from(parent.context)
-        val binding = ItemNoteBinding.inflate(layoutInflater, parent, false)
-        return NoteViewHolder(binding)
+        return NoteViewHolder(
+            itemView = LayoutInflater.from(parent.context).inflate(
+                R.layout.item_note,
+                parent,
+                false,
+            ),
+            homeViewModel = homeViewModel,
+            updateNote = updateNote,
+        )
     }
 
     override fun onBindViewHolder(holder: NoteViewHolder, position: Int) {
-        val note = notes[position]
-        holder.bind(note)
+        holder.bind(getItem(position))
     }
-
-    override fun getItemCount(): Int {
-        return notes.size
-    }
-
 }

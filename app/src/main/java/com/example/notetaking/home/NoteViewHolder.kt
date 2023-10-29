@@ -1,39 +1,39 @@
 package com.example.notetaking.home
 
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.RecyclerView
+import com.example.notetaking.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class NoteViewHolder: ViewModel() {
+class NoteViewHolder(
+    itemView: View,
+    private val homeViewModel: HomeViewModel?,
+    private val updateNote: (note: Note) -> Unit,
+) : RecyclerView.ViewHolder(itemView) {
 
-    private val noteList: MutableList<Note> = mutableListOf()
-
-    private val _note = MutableLiveData<List<Note>>()
-
-    val notes: LiveData<List<Note>> = _note
-
-    private val _progres = MutableLiveData<Boolean>()
-
-    val progress: LiveData<Boolean> = _progres
-
-    fun provideData() {
-
-        viewModelScope.launch(Dispatchers.IO) {
-            _progres.postValue(true)
-
-            delay(1000)
+    fun bind(note: Note) {
+        val tvContent = itemView.findViewById<TextView>(R.id.content)
+        val tvTitle = itemView.findViewById<TextView>(R.id.title)
+        val buttonDelete = itemView.findViewById<ImageView>(R.id.button_delete)
+        val buttonEdit = itemView.findViewById<ImageView>(R.id.button_edit)
+        tvContent.text = note.content
+        tvTitle.text = note.title
+        itemView.setOnClickListener {
+            updateNote(note)
         }
-    }
-
-    fun fetchData(): List<Note> {
-        return if (this.noteList.isEmpty()) {
-            emptyList()
-        } else {
-            this.noteList
+        buttonDelete.setOnClickListener {
+            homeViewModel?.deleteNote()
+        }
+        buttonEdit.setOnClickListener {
+            homeViewModel?.editNote()
         }
     }
 }
