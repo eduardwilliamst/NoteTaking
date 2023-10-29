@@ -46,15 +46,5 @@
             android:text="Register"
             android:layout_marginTop="16dp" />
 
-        <TextView
-            android:id="@+id/loginTextView"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/registerButton"
-            android:text="Sudah punya akun? Login di sini"
-            android:textAlignment="center"
-            android:textColor="@color/design_default_color_primary"
-            android:layout_marginTop="16dp"
-            android:onClick="@{() -> viewModel.onLoginClick()}" />
     </RelativeLayout>
 </layout>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/home_nav"
+    app:startDestination="@id/home1Fragment">
+
+    <fragment
+        android:id="@+id/home1Fragment"
+        android:name="com.example.notetaking.home.Home1Fragment"
+        android:label="fragment_home1"
+        tools:layout="@layout/fragment_home1" >
+        <action
+            android:id="@+id/action_home1Fragment_to_home2Fragment"
+            app:destination="@id/home2Fragment" />
+        <action
+            android:id="@+id/action_home1Fragment_to_home3Fragment"
+            app:destination="@id/home3Fragment" />
+        <action
+            android:id="@+id/action_home1Fragment_to_home4Fragment"
+            app:destination="@id/home4Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/home2Fragment"
+        android:name="com.example.notetaking.home.Home2Fragment"
+        android:label="fragment_home2"
+        tools:layout="@layout/fragment_home2" />
+    <fragment
+        android:id="@+id/home3Fragment"
+        android:name="com.example.notetaking.home.Home3Fragment"
+        android:label="fragment_home3"
+        tools:layout="@layout/fragment_home3" />
+    <fragment
+        android:id="@+id/home4Fragment"
+        android:name="com.example.notetaking.home.Home4Fragment"
+        android:label="fragment_home4"
+        tools:layout="@layout/fragment_home4" />
+</navigation>

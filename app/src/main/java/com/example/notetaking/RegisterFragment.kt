@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -61,8 +62,10 @@ class RegisterFragment : Fragment() {
 
                 // Redirect ke halaman Login
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+                Toast.makeText(requireContext(), "Username = $username and password = $password", Toast.LENGTH_SHORT).show()
             } else {
                 // Handle case when username or password is empty
+                Toast.makeText(requireContext(), "Username and password cannot be empty", Toast.LENGTH_SHORT).show()
             }
         }
 
